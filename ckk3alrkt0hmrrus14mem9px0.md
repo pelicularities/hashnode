@@ -19,13 +19,13 @@ Integer and float division in Python:
 
 String interpolation in Ruby:
 ```
-planet = "world"
+planet = 'world'
 puts "Hello #{planet}!" #=> prints "Hello world!"
 ```
 
 Formatted strings in Python:
 ```
-planet = "world"
+planet = 'world'
 print(f'Hello {planet}!') #=> prints "Hello world!"
 ```
 
