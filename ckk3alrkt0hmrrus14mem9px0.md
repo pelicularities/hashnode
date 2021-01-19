@@ -237,4 +237,4 @@ for i in dict.items():
 ```
 
 ## Keyword arguments / last argument hash
-[I'm not touching that hot potato.](https://discuss.rubyonrails.org/t/new-2-7-3-0-keyword-argument-pain-point/74980/29)
+[I'm not touching that hot potato.](https://discuss.rubyonrails.org/t/new-2-7-3-0-keyword-argument-pain-point/74980)
