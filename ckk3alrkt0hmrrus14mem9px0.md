@@ -123,7 +123,7 @@ squares = array.map { |i| i**2 }
 # squares = [1, 4, 9, 16, 25]
 ```
 
-Again, you can do this using a combination of list() and map() in Python:
+Again, you can do this using a combination of `list()` and `map()` in Python:
 ```
 array = [i for i in range(1, 6)]
 squares = list(map(lambda i: i**2, array))
