@@ -65,9 +65,9 @@ Manipulating time is as gnarly in JavaScript as it is in actual time travel, how
 
 So your date is stored in UTC, but most of the `Date` methods will return results in the runtime's local time zone (UTC+08:00 in my case), and you need to output date and time in a third time zone (UTC-05:00, in our example). Great.
 
-Looking down the list of `Date` methods, what do we have at our disposal? `toString()` will always return a date and time string based on the runtime's time zone, so that's out. `toUTCString()` will always return a date and time string based on UTC, so that's out too. 
+Looking down the list of `Date` methods, what do we have at our disposal? [`toString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toString) will always return a date and time string based on the runtime's time zone, so that's out. [`toUTCString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toUTCString) will always return a date and time string based on UTC, so that's out too. 
 
-`toLocaleString()` accepts an `options` argument that lets you set the `timeZone` property — this could be useful to us. How do we specify the timezone we need? MDN helpfully points us to the documentation for the `Intl.DateTimeFormat()` constructor, which has a list of all the options that we can give to `toLocaleString()` for date and time formatting. Scroll down to `timeZone`, and let's see what we have:
+[`toLocaleString()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleString) accepts an `options` argument that lets you set the `timeZone` property — this could be useful to us. How do we specify the timezone we need? MDN helpfully points us to the documentation for the [`Intl.DateTimeFormat()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat) constructor, which has a list of all the options that we can give to `toLocaleString()` for date and time formatting. Scroll down to `timeZone`, and let's see what we have:
 
 > `timeZone`: The time zone to use. The only value implementations must recognize is "`UTC`"; the default is the runtime's default time zone. Implementations may also recognize the time zone names of the [IANA time zone database](https://www.iana.org/time-zones), such as "`Asia/Shanghai`", "`Asia/Kolkata`", "`America/New_York`".
 
@@ -93,11 +93,11 @@ If you queried the city of Chicago during daylight savings time, the API might r
 Or we could avoid IANA time zones altogether, and just math instead.
 
 ## Detour: Do Not Do This
-At this point, you might spot the `getUTCHours()` and `setUTCHours()` methods. `getUTCHours()` returns an integer between `0` and `23`, representing the hour in UTC time in your `Date` object. For the `correctDate` `Date` object that we've been playing with, `getUTCHours()` returns `6`, since it is 6 am in Greenwich, London when it is 2 pm in Singapore. 
+At this point, you might spot the [`getUTCHours()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getUTCHours) and [`setUTCHours()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setUTCHours) methods. `getUTCHours()` returns an integer between `0` and `23`, representing the hour in UTC time in your `Date` object. For the `correctDate` `Date` object that we've been playing with, `getUTCHours()` returns `6`, since it is 6 am in Greenwich, London when it is 2 pm in Singapore. 
 
 `setUTCHours()` takes one argument, an integer between `0` and `23`, and updates the hour in UTC in your `Date` object.
 
-"Aha!" you might think. "Let's calculate how many hours we need to add or subtract, and use setUTCHours() to manually offset the time! Then let's print using `toUTCString()`, so we don't have to worry about the user's timezone!"
+"Aha!" you might think. "Let's calculate how many hours we need to add or subtract, and use `setUTCHours()` to manually offset the time! Then let's print using `toUTCString()`, so we don't have to worry about the user's timezone!"
 
 ```
 const correctDate = new Date(1613023705 * 1000);
@@ -105,7 +105,7 @@ const targetTimezone = -18000; // or whatever number the API returns
 const offsetHours = targetTimezone / 3600;
 const utcHours = correctDate.getUTCHours();
 correctDate.setUTCHours(utcHours + offsetHours);
-correctDate.toString();
+correctDate.toUTCString();
 ```
 This prints `Thu Feb 11 2021 01:08:25 GMT`. Of course, GMT is the incorrect timezone, but we'll have to live with it. We can easily truncate the GMT timezone out of the string if we don't need it, or replace it with the correct timezone. Perfect solution!
 
@@ -119,7 +119,21 @@ if (localHours < 0) localHours += 24;
 if (localHours > 23) localHours -= 24;
 correctDate.setUTCHours(localHours);
 ```
-Now you're in trouble, because we don't just want to display the local time, we also want to display the local *date*, and now your `Date` object is *one day ahead of or one day behind UTC*.
+Now you're in trouble, because we don't just want to display the local time, we also want to display the local *date*, and now your `Date` object is *one day ahead of or one day behind the actual local date*.
+
+Go ahead, try it with an offset that's big enough to trigger this problem:
+```
+const correctDate = new Date(1613023705 * 1000);
+const targetTimezone = -36000; // or whatever number the API returns
+const offsetHours = targetTimezone / 3600;
+const utcHours = correctDate.getUTCHours();
+let localHours = utcHours + offsetHours;
+if (localHours < 0) localHours += 24;
+if (localHours > 23) localHours -= 24;
+correctDate.setUTCHours(localHours);
+correctDate.toUTCString();
+```
+This prints `Thu, 11 Feb 2021 20:08:25 GMT`, which is one day *ahead* of the actual date in Honolulu based on the timestamp that we provided to the `Date` object.
 
 There's a better solution along these lines, which is to apply the offset directly to the timestamp.
 
