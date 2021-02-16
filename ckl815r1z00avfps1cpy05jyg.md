@@ -37,7 +37,7 @@ In most programming languages, objects and classes that handle date and time man
 For example, as I write this on Thursday, 11 Feb 2021 at 2:08 pm at UTC+08:00, the current Unix timestamp is `1613023705`.
 
 ## Human-readable dates and times
-Computers are very good at counting large numbers, but humans are not. We need to turn the timestamp into something meaningful for humans. This is where [JavaScript's `Date` object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) comes in useful: we can [create a new `Date` object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date) by passing in a timestamp, then we'll have access to a whole host of `Date` methods, including `toString()` and `toLocaleString`, which help us convert the `Date` object to human-readable strings.
+Computers are very good at counting large numbers, but humans are not. We need to turn the timestamp into something meaningful for humans. This is where [JavaScript's `Date` object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date) comes in useful: we can [create a new `Date` object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date) by passing in a timestamp, then we'll have access to a whole host of `Date` methods, including `toString()` and `toLocaleString()`, which help us convert the `Date` object to human-readable strings.
 
 Let's try it:
 ```
@@ -145,7 +145,7 @@ const date = new Date((1613023705-18000) * 1000);
 console.log(date.toUTCString());
 ```
 
-Here, we're applying the offset of `-18000` directly to the timestamp, then creating a `Date` object out of it. Calling `toUTCString()` on this `Date` object gives us `Thu, 11 Feb 2021 01:08:25 GMT`. Now we have the correct date and time, but the incorrect timezone. If you don't need to display the timezone, you can truncate the timezone if you're okay with the format of `toUTCString()`, or use `toLocaleString('en-GB', { timeZone: 'UTC ' })` and specify [your own set of formatting options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat). 
+Here, we're applying the offset of `-18000` directly to the timestamp, then creating a `Date` object out of it. Calling `toUTCString()` on this `Date` object gives us `Thu, 11 Feb 2021 01:08:25 GMT`. Now we have the correct date and time, but the incorrect timezone. If you don't need to display the timezone, you can truncate the timezone if you're okay with the format of `toUTCString()`, or use `toLocaleString('en-GB', { timeZone: 'UTC' })` and specify [your own set of formatting options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat). 
 
 I must admit that this solution is not very satisfying, because of the fact that conceptually, this is not the "correct" use of the UNIX timestamp or of timezones. We aren't moving through timezones, we're actually moving through UTC time itself. Ideally, we would be able to store both the timestamp *and* our desired time offset in a single `Date` object, or we would be able to give `toLocaleString()` the time offset that we want in an alternative format (like... oh, I don't know, the number of milliseconds?) instead of in the form of IANA time zones. 
 
