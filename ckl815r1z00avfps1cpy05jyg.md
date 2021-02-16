@@ -107,7 +107,7 @@ const utcHours = correctDate.getUTCHours();
 correctDate.setUTCHours(utcHours + offsetHours);
 correctDate.toUTCString();
 ```
-This prints `Thu Feb 11 2021 01:08:25 GMT`. Of course, GMT is the incorrect timezone, but we'll have to live with it. We can easily truncate the GMT timezone out of the string if we don't need it, or replace it with the correct timezone. Perfect solution!
+This gives us `Thu Feb 11 2021 01:08:25 GMT`. Of course, GMT is the incorrect timezone, but we'll have to live with it. We can easily truncate the GMT timezone out of the string if we don't need it, or replace it with the correct timezone. Perfect solution!
 
 Wrong.
 
@@ -133,7 +133,7 @@ if (localHours > 23) localHours -= 24;
 correctDate.setUTCHours(localHours);
 correctDate.toUTCString();
 ```
-This prints `Thu, 11 Feb 2021 20:08:25 GMT`, which is one day *ahead* of the actual date in Honolulu based on the timestamp that we provided to the `Date` object.
+This returns `Thu, 11 Feb 2021 20:08:25 GMT`, which is one day *ahead* of the actual date in Honolulu based on the timestamp that we provided to the `Date` object.
 
 There's a better solution along these lines, which is to apply the offset directly to the timestamp.
 
